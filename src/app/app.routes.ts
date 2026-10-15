@@ -30,6 +30,17 @@ export const routes: Routes = [
         ]
     },
     {
+        path:'lista-zodiaco',
+        children:[
+            {
+                path:'lista-zodiaco', loadComponent:()=>
+                    import('./lista-zodiaco/lista-zodiaco').then(
+                        (c)=>c.ListaZodiaco
+                    )
+            }
+        ]
+    },
+    {
         path:'', redirectTo: 'admin', pathMatch:'full'
     },
     {

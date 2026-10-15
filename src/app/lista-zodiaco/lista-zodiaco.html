@@ -1,0 +1,75 @@
+<div class="max-w-6xl mx-auto mt-8">
+  <h2 class="mb-4 text-2xl font-bold text-gray-900">Lista de zodiacos</h2>
+  
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+        <tr>
+          <th scope="col" class="px-6 py-3">Nombre Completo</th>
+          <th scope="col" class="px-6 py-3">Edad</th>
+          <th scope="col" class="px-6 py-3">Signo Zodiacal</th>
+          <th scope="col" class="px-6 py-3">Sexo</th>
+          <th scope="col" class="px-6 py-3">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let zodiaco of zodiacos; let i = index" class="bg-white border-b border-gray-200 hover:bg-gray-50">
+          <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ zodiaco.nombreCompleto }}</td>
+          <td class="px-6 py-4">{{ zodiaco.edad }} años</td>
+          <td class="px-6 py-4 capitalize">{{ zodiaco.signo }}</td>
+          <td class="px-6 py-4">{{ zodiaco.sexo }}</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300" (click)="editarZodiacos(i)">Editar</button>
+              <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300" (click)="eliminarZodiaco(i)">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="zodiacos.length === 0" class="p-4 mt-4 text-sm text-gray-800 rounded-lg bg-gray-100" role="alert">
+    <span class="font-medium">Información:</span> No hay registros de zodiaco.
+  </div>
+</div>
+<div *ngIf="mostrarModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+    <h3 class="mb-4 text-xl font-bold text-gray-900">Editar Registro Zodiacal</h3>
+    
+    <form [formGroup]="formulario" class="space-y-4">
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-900">Nombre Completo</label>
+        <input type="text" formControlName="nombreCompleto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900">Edad</label>
+          <input type="number" formControlName="edad" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+        </div>
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900">Sexo</label>
+          <select formControlName="sexo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-900">Signo Zodiacal</label>
+        <input type="text" formControlName="signo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <button type="button" (click)="cerrarModal()" class="text-gray-700 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5">
+          Cancelar
+        </button>
+        <button type="button" (click)="guardarEdicionModal()" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+          Guardar Cambios
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

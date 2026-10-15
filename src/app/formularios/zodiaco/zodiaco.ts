@@ -1,24 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { IZodiaco } from './izodiaco';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-zodiaco',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './zodiaco.html',
   styleUrl: './zodiaco.css'
 })
 export class Zodiaco implements OnInit {
   formulario!: FormGroup;
+  indiceEdicion:number=-1
+
+  zodiacos:IZodiaco[]=[]
+  nuevoZodiaco:IZodiaco={//La lista 
+    nombreCompleto: '',
+    edad: 0,
+    signo: '',
+    sexo: ''
+  }
 
   nombreCompleto: string = '';
   edad: number = 0;
   signo: string = '';
+  sexo: string = '';
   imagenSigno: string = '';
   mostrarResultado: boolean = false;
 
   ngOnInit(): void {
+    this.cargarZodiaco()
     this.formulario = new FormGroup({
       nombre: new FormControl(''),
       apPaterno: new FormControl(''),
@@ -30,12 +43,44 @@ export class Zodiaco implements OnInit {
     });
   }
 
+  agregarZodiaco():void { 
+
+    const datosGuardados = localStorage.getItem('zodiacos');
+    let listaActualizada: IZodiaco[] = datosGuardados ? JSON.parse(datosGuardados) : [];
+
+    if(this.indiceEdicion !== -1){
+      listaActualizada[this.indiceEdicion]={
+        ...this.nuevoZodiaco
+      }
+    }else{
+      listaActualizada.push({...this.nuevoZodiaco}) //... se conoce como split o metodos de propagación, le dice al script que van a insertarse todas las propiedades que contenga el objeto, para eso primero debemos cargar el local storage ya que quqeremos agregar elementos a la lista, vemos si existe la lista en el local storage y se la insertamos a este elemento
+    }
+    
+    localStorage.setItem(
+      'zodiacos',
+      JSON.stringify(listaActualizada)
+    )
+  }
+
   imprimir(): void {
     if (this.formulario.invalid) {
       return;
     }
 
     let valores = this.formulario.value;
+
+    if(
+      !valores.nombre || 
+      !valores.apPaterno || 
+      !valores.apMaterno || 
+      !valores.dia || 
+      !valores.mes || 
+      !valores.anio || 
+      !valores.sexo
+    ){
+      alert('Todos los campos son obligatorios');
+      return;
+    }
 
     this.nombreCompleto = `${valores.nombre} ${valores.apPaterno} ${valores.apMaterno}`;
 
@@ -52,6 +97,9 @@ export class Zodiaco implements OnInit {
       calculoEdad--;
     }
     this.edad = calculoEdad;
+
+    let sexo = valores.sexo
+    this.sexo = sexo
 
     let ciclo = (anioNacimiento - 1900) % 12;
 
@@ -110,5 +158,35 @@ export class Zodiaco implements OnInit {
     }
 
     this.mostrarResultado = true;
+
+
+    this.nuevoZodiaco.nombreCompleto = this.nombreCompleto;
+    this.nuevoZodiaco.edad = this.edad;
+    this.nuevoZodiaco.signo = this.signo;
+    this.nuevoZodiaco.sexo = valores.sexo;
+    
+    this.agregarZodiaco()
+    this.limpiarCampos()
+  }
+
+
+  cargarZodiaco(): void{
+    const datos = localStorage.getItem('zodiacos'); //Cargamos los elementos a la lista que encontramos en el localStorage
+
+    if(datos){
+      this.zodiacos = JSON.parse(datos) //Transforma los datos 
+    }
+  }
+
+
+  limpiarCampos():void{
+    this.formulario.reset();
+    this.nuevoZodiaco = {
+      nombreCompleto: '',
+      edad: 0,
+      signo: '',
+      sexo: ''
+    }
+    this.indiceEdicion=-1
   }
 }
